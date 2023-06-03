@@ -1,0 +1,33 @@
+import numpy as np
+import pymc3 as pm
+import matplotlib.pyplot as plt
+
+# Generate some synthetic data from a known distribution
+np.random.seed(42)
+true_mean = 5
+true_std = 2
+data = np.random.normal(true_mean, true_std, size=1000)
+
+# Define the prior distribution
+prior_mean = 0
+prior_std = 10
+
+# Define the likelihood function
+def likelihood(data, mean, std):
+    return np.prod(np.exp(-0.5 * ((data - mean) / std) ** 2) / (np.sqrt(2 * np.pi) * std))
+
+# Define the model
+with pm.Model() as model:
+    # Define the priors
+    mean = pm.Normal('mean', mu=prior_mean, sd=prior_std)
+    std = pm.HalfNormal('std', sd=prior_std)
+
+    # Define the likelihood
+    obs = pm.Normal('obs', mu=mean, sd=std, observed=data)
+
+    # Perform MCMC sampling
+    trace = pm.sample(2000, tune=1000, cores=1)
+
+# Plot the posterior distribution of the parameters
+pm.plot_posterior(trace, var_names=['mean', 'std'], figsize=(12, 6))
+plt.show()
