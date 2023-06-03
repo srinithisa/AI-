@@ -1,0 +1,54 @@
+import random
+
+class Movie:
+    def __init__(self, title, genre):
+        self.title = title
+        self.genre = genre
+
+class MovieRecommender:
+    def __init__(self, movies):
+        self.movies = movies
+
+    def get_random_movie(self):
+        return random.choice(self.movies)
+
+    def recommend_movie(self, user_preferences, user_history):
+        # Filter movies based on user preferences
+        filtered_movies = [movie for movie in self.movies if movie.genre in user_preferences]
+
+        # Remove movies already watched by the user
+        unwatched_movies = [movie for movie in filtered_movies if movie not in user_history]
+
+        if unwatched_movies:
+            return random.choice(unwatched_movies)
+        else:
+            return None
+
+# Create a list of movies
+movies = [
+    Movie("The Shawshank Redemption", "Drama"),
+    Movie("The Godfather", "Crime"),
+    Movie("The Dark Knight", "Action"),
+    Movie("Pulp Fiction", "Crime"),
+    Movie("Fight Club", "Drama"),
+    Movie("Inception", "Sci-Fi"),
+    Movie("The Matrix", "Sci-Fi"),
+    Movie("Goodfellas", "Crime"),
+    Movie("Forrest Gump", "Drama"),
+    Movie("The Silence of the Lambs", "Thriller"),
+]
+
+# Create a movie recommender instance
+recommender = MovieRecommender(movies)
+
+# User preferences and viewing history
+user_preferences = ["Drama", "Thriller"]
+user_history = [movies[0], movies[1], movies[4]]
+
+# Get a movie recommendation
+recommendation = recommender.recommend_movie(user_preferences, user_history)
+
+if recommendation:
+    print("Recommended movie:", recommendation.title)
+else:
+    print("No new recommendations at the moment.")
